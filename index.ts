@@ -9,7 +9,7 @@
 // @grant        none
 // ==/UserScript==
 
-const SHOW_REVIEW_COUNT_FROM = 100;
+const SHOW_REVIEW_COUNT_FROM = 200;
 
 setInterval(() => {
   const feed = document.querySelector("div[role='feed']");
