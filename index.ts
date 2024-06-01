@@ -11,24 +11,28 @@
 
 const SHOW_REVIEW_COUNT_FROM = 400;
 
-setInterval(() => {
+setInterval(async () => {
   const feed = document.querySelector("div[role='feed']");
   if (feed === null) return;
-  [...feed.querySelectorAll<HTMLDivElement>("div[class^='Nv2PK THOPZb CpccDe'")]
-    .filter((item) => {
-      if (item.style.display === "none") return false;
-      if (item.textContent?.includes("クチコミはありません")) return true;
-      const reviewCountElm = [
-        ...item.querySelectorAll("span[aria-hidden='true']"),
-      ].find((elm) => elm?.textContent?.startsWith("("));
-      if (reviewCountElm === undefined || reviewCountElm.textContent === null)
-        return false;
-      const reviewCount = parseInt(
-        reviewCountElm.textContent.replaceAll(/[(),]/g, ""),
-      );
-      return reviewCount < SHOW_REVIEW_COUNT_FROM;
-    })
-    .forEach((item) => {
-      item.style.display = "none";
-    });
+  const divs = [
+    ...feed.querySelectorAll<HTMLDivElement>(
+      "div[class^='Nv2PK THOPZb CpccDe'",
+    ),
+  ].filter((item) => {
+    if (item.style.display === "none") return false;
+    if (item.textContent?.includes("クチコミはありません")) return true;
+    const reviewCountElm = [
+      ...item.querySelectorAll("span[aria-hidden='true']"),
+    ].find((elm) => elm?.textContent?.startsWith("("));
+    if (reviewCountElm === undefined || reviewCountElm.textContent === null)
+      return false;
+    const reviewCount = parseInt(
+      reviewCountElm.textContent.replaceAll(/[(),]/g, ""),
+    );
+    return reviewCount < SHOW_REVIEW_COUNT_FROM;
+  });
+  for (const item of divs) {
+    item.style.display = "none";
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
 }, 1000);
