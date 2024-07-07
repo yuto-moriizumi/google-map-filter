@@ -9,7 +9,7 @@
 // @grant        none
 // ==/UserScript==
 
-const SHOW_REVIEW_COUNT_FROM = 400;
+const SHOW_REVIEW_COUNT_FROM = 2000;
 
 setInterval(async () => {
   const feed = document.querySelector("div[role='feed']");
@@ -19,7 +19,7 @@ setInterval(async () => {
       "div[class^='Nv2PK THOPZb CpccDe'",
     ),
   ].filter((item) => {
-    if (item.style.display === "none") return false;
+    if (item.style.visibility === "hidden") return false;
     if (item.textContent?.includes("クチコミはありません")) return true;
     const reviewCountElm = [
       ...item.querySelectorAll("span[aria-hidden='true']"),
@@ -32,7 +32,7 @@ setInterval(async () => {
     return reviewCount < SHOW_REVIEW_COUNT_FROM;
   });
   for (const item of divs) {
-    item.style.display = "none";
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    item.style.visibility = "hidden";
+    await new Promise((resolve) => setTimeout(resolve, 1));
   }
-}, 1000);
+}, 500);
