@@ -12,7 +12,7 @@
 
 const SHOW_REVIEW_COUNT_FROM = 3000;
 
-setInterval(async () => {
+const filterFeed = async (): Promise<void> => {
   const feed = document.querySelector("div[role='feed']");
   if (feed === null) return;
   const divs = [
@@ -36,4 +36,41 @@ setInterval(async () => {
     item.style.visibility = "hidden";
     await new Promise((resolve) => setTimeout(resolve, 1));
   }
-}, 500);
+};
+
+let scheduled = false;
+let running = false;
+let pending = false;
+
+const scan = async (): Promise<void> => {
+  if (running) {
+    pending = true;
+    return;
+  }
+  running = true;
+  try {
+    await filterFeed();
+  } finally {
+    running = false;
+    if (pending) {
+      pending = false;
+      scheduleScan();
+    }
+  }
+};
+
+const scheduleScan = (): void => {
+  if (scheduled) return;
+  scheduled = true;
+  requestIdleCallback(
+    () => {
+      scheduled = false;
+      void scan();
+    },
+    { timeout: 200 },
+  );
+};
+
+const observer = new MutationObserver(scheduleScan);
+observer.observe(document.body, { childList: true, subtree: true });
+scheduleScan();
